@@ -30,7 +30,7 @@ def init_db():
 
 init_db()
 
-# 1. TRANG CHỦ (Giao diện chính cho Người dân)
+# 1. TRANG CHỦ (Giao diện chính cho Người dân - Tích hợp nền Google Maps chuẩn)
 @app.route('/')
 def index():
     conn = sqlite3.connect(DB_NAME)
@@ -164,11 +164,14 @@ def index():
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
+            // Khởi tạo bản đồ với tọa độ trung tâm Bờ Ngoong, Gia Lai
             var map = L.map('map').setView([13.905, 108.015], 13);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap - Công an xã Bờ Ngoong'
+            // Dùng nền Bản đồ giao thông chuẩn Google Maps
+            L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                maxZoom: 20,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                attribution: '© Google Maps - Công an xã Bờ Ngoong'
             }).addTo(map);
 
             var points = {{ points | tojson | safe }};
@@ -215,7 +218,6 @@ def index():
             function focusCategory(cat) {
                 closeModal();
                 renderMarkers(cat);
-                // Highlight chip
                 document.querySelectorAll('.filter-chip').forEach(c => {
                     if(c.textContent.includes(cat)) c.click();
                 });
